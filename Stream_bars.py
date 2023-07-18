@@ -1,6 +1,7 @@
 from datetime import datetime
 import time  # Подписка на события по времени
 from QuikPy import QuikPy  # Работа с QUIK из Python через LUA скрипты QuikSharp
+import requests
 
 
 def PrintCallback(data):
@@ -9,24 +10,36 @@ def PrintCallback(data):
     - Получение обезличенной сделки
     - Получение новой свечки
     """
-    print(f'{datetime.now().strftime("%d.%m.%Y %H:%M:%S")} - {data["data"]}')  # Печатаем полученные данные
+    print(
+        f'{datetime.now().strftime("%d.%m.%Y %H:%M:%S")} - {data["data"]}'
+    )  # Печатаем полученные данные
+    response = requests.post(
+        "http://localhost:5000/sumo/api/v1.0/bars", json=data["data"]
+    )
+    print(f"response = {response.json()}")
+
 
 def ChangedConnection(data):
     """Пользовательский обработчик событий:
     - Соединение установлено
     - Соединение разорвано
     """
-    print(f'{datetime.now().strftime("%d.%m.%Y %H:%M:%S")} - {data}')  # Печатаем полученные данные
+    print(
+        f'{datetime.now().strftime("%d.%m.%Y %H:%M:%S")} - {data}'
+    )  # Печатаем полученные данные
 
-if __name__ == '__main__':  # Точка входа при запуске этого скрипта
-    qpProvider = QuikPy()  # Вызываем конструктор QuikPy с подключением к локальному компьютеру с QUIK
+
+if __name__ == "__main__":  # Точка входа при запуске этого скрипта
+    qpProvider = (
+        QuikPy()
+    )  # Вызываем конструктор QuikPy с подключением к локальному компьютеру с QUIK
     # qpProvider = QuikPy(Host='<Ваш IP адрес>')  # Вызываем конструктор QuikPy с подключением к удаленному компьютеру с QUIK
 
-    classCode = 'TQBR'  # Класс тикера Акции ММВБ
+    classCode = "TQBR"  # Класс тикера Акции ММВБ
     # secCode = 'GAZP'  # Тикер
 
-    sec_codes = ('SBER', 'VTBR', 'GAZP')
-             
+    sec_codes = ("SBER", "VTBR", "GAZP")
+
     # Просмотр изменений состояния соединения терминала QUIK с сервером брокера
     # qpProvider.OnConnected = ChangedConnection  # Нажимаем кнопку "Установить соединение" в QUIK
     # qpProvider.OnDisconnected = ChangedConnection  # Нажимаем кнопку "Разорвать соединение" в QUIK
@@ -37,17 +50,35 @@ if __name__ == '__main__':  # Точка входа при запуске это
     qpProvider.OnNewCandle = PrintCallback  # Обработчик получения новой свечки
     for secCode in sec_codes:
         for interval in (1,):  # (1, 60, 1440) = Минутки, часовки, дневки
-            print(f'Подписка на интервал {interval}:', qpProvider.SubscribeToCandles(classCode, secCode, interval)['data'])
-            print(f'Статус подписки на интервал {interval}:', qpProvider.IsSubscribed(classCode, secCode, interval)['data'])
-    input('Enter - отмена\n')
+            print(
+                f"Подписка на интервал {interval}:",
+                qpProvider.SubscribeToCandles(classCode, secCode, interval)["data"],
+            )
+            print(
+                f"Статус подписки на интервал {interval}:",
+                qpProvider.IsSubscribed(classCode, secCode, interval)["data"],
+            )
+    input("Enter - отмена\n")
     for secCode in sec_codes:
         for interval in (1,):  # (1, 60, 1440) = Минутки, часовки, дневки
-            print(f'Отмена подписки на интервал {interval}', qpProvider.UnsubscribeFromCandles(classCode, secCode, interval)['data'])
-            print(f'Статус подписки на интервал {interval}:', qpProvider.IsSubscribed(classCode, secCode, interval)['data'])
-    qpProvider.OnNewCandle = qpProvider.DefaultHandler  # Возвращаем обработчик по умолчанию
+            print(
+                f"Отмена подписки на интервал {interval}",
+                qpProvider.UnsubscribeFromCandles(classCode, secCode, interval)["data"],
+            )
+            print(
+                f"Статус подписки на интервал {interval}:",
+                qpProvider.IsSubscribed(classCode, secCode, interval)["data"],
+            )
+    qpProvider.OnNewCandle = (
+        qpProvider.DefaultHandler
+    )  # Возвращаем обработчик по умолчанию
 
-    qpProvider.OnConnected = qpProvider.DefaultHandler  # Возвращаем обработчик по умолчанию
-    qpProvider.OnDisconnected = qpProvider.DefaultHandler  # Возвращаем обработчик по умолчанию
+    qpProvider.OnConnected = (
+        qpProvider.DefaultHandler
+    )  # Возвращаем обработчик по умолчанию
+    qpProvider.OnDisconnected = (
+        qpProvider.DefaultHandler
+    )  # Возвращаем обработчик по умолчанию
 
     # Выход
     qpProvider.CloseConnectionAndThread()  # Перед выходом закрываем соединение и поток QuikPy из любого экземпляра
