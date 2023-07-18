@@ -82,21 +82,21 @@ if __name__ == '__main__':  # Точка входа при запуске это
                  'SNGSP', 'SELG', 'UPRO', 'RUAL', 'TRNFP', 'FEES', 'SGZH', 'BANE', 'PHOR', 'PIKK')  # TOP 40 акций ММВБ
     # sec_codes = ('SBER',)  # Для тестов
     # sec_codes = ('SiM3', 'RIM3')  # Формат фьючерса: <Тикер><Месяц экспирации><Последняя цифра года> Месяц экспирации: 3-H, 6-M, 9-U, 12-Z
-    datapath = '..\\Data\\'  # Путь к файлам (Windows)
+    datapath = '..\\..\\Data\\'  # Путь к файлам (Windows)
 
     # Получаем бары в первый раз / когда идет сессия
     # save_candles_to_file(classCode, secCodes, skipLastDate=True, fourPriceDoji=True)  # Дневные бары
-    save_candles_to_file(class_code, sec_codes, 'M', 60, skip_first_date=True, skip_last_date=True)  # часовые бары
+    # save_candles_to_file(classCode, secCodes, 'M', 60, skipFirstDate=True, skipLastDate=True)  # часовые бары
     # save_candles_to_file(classCode, secCodes, 'M', 15, skipFirstDate=True, skipLastDate=True)  # 15-и минутные бары
     # save_candles_to_file(classCode, secCodes, 'M', 5, skipFirstDate=True, skipLastDate=True)  # 5-и минутные бары
     # save_candles_to_file(classCode, secCodes, 'M', 1, skipFirstDate=True, skipLastDate=True)  # минутные бары
 
     # Получаем бары, когда сессия не идет
-    # save_candles_to_file(class_code, sec_codes, four_price_doji=True)  # Дневные бары
-    # save_candles_to_file(class_code, sec_codes, 'M', 60, skip_first_date=True)  # часовые бары
-    # save_candles_to_file(class_code, sec_codes, 'M', 15, skip_first_date=True)  # 15-и минутные бары
-    # save_candles_to_file(class_code, sec_codes, 'M', 5, skip_first_date=True)  # 5-и минутные бары
-    # save_candles_to_file(class_code, sec_codes, 'M', 1, skip_first_date=True)  # минутные бары
+    save_candles_to_file(class_code, sec_codes, four_price_doji=True)  # Дневные бары
+    save_candles_to_file(class_code, sec_codes, 'M', 60, skip_first_date=True)  # часовые бары
+    save_candles_to_file(class_code, sec_codes, 'M', 15, skip_first_date=True)  # 15-и минутные бары
+    save_candles_to_file(class_code, sec_codes, 'M', 5, skip_first_date=True)  # 5-и минутные бары
+    save_candles_to_file(class_code, sec_codes, 'M', 1, skip_first_date=True)  # минутные бары
 
     qp_provider.CloseConnectionAndThread()  # Перед выходом закрываем соединение и поток QuikPy из любого экземпляра
     print(f'Скрипт выполнен за {(time() - start_time):.2f} с')
